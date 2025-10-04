@@ -12,6 +12,10 @@ dry_run: False #', help='Print training options and exit',                      
 
 id: 0
 
+# Device configuration
+device: "auto"  # options: "auto", "cpu", "cuda", "cuda:0", "cuda:1", etc.
+num_gpus: 1     # number of GPUs to use (1 = single GPU, >1 = multi-GPU with DataParallel)
+
 #testing (demos)
 
 hydra:
