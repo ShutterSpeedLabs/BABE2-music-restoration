@@ -5,7 +5,7 @@ import utils.setup as setup
 
 def _main(args):
 
-    device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device=torch.device("cpu")  # Fixed: was torch.cpu (the class) instead of torch.device("cpu") (the device instance)
     global __file__
     __file__ = hydra.utils.to_absolute_path(__file__)
     dirname = os.path.dirname(__file__)
@@ -30,7 +30,7 @@ def _main(args):
     tester=setup.setup_tester(args, network=network, diff_params=diff_params,  device=device) #this will be used for making demos during training
     # Print options.
     print()
-    print('Training options:')
+    print('Testing options:')  # Fixed: was 'Training options' but this is test.py
     print()
     print(f'Output directory:        {args.model_dir}')
     print(f'Network architecture:    {args.network.callable}')
@@ -61,7 +61,7 @@ def _main(args):
 @hydra.main(config_path="conf", config_name="conf")
 def main(args):
     #set device to gpu 2    
-    torch.cuda.set_device(2)
+    # torch.cuda.set_device(0)
     _main(args)
 
 if __name__ == "__main__":
