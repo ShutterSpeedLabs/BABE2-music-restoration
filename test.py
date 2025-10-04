@@ -61,7 +61,7 @@ def _main(args):
 @hydra.main(config_path="conf", config_name="conf")
 def main(args):
     #set device to gpu 2    
-    torch.cuda.set_device(2)
+    torch.cuda.set_device(0)
     _main(args)
 
 if __name__ == "__main__":
