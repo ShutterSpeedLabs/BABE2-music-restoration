@@ -1,0 +1,168 @@
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+    params: null
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
+  hydra_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][HYDRA] %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+    root:
+      level: INFO
+      handlers:
+      - console
+    loggers:
+      logging_example:
+        level: DEBUG
+    disable_existing_loggers: false
+  job_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+      file:
+        class: logging.FileHandler
+        formatter: simple
+        filename: ${hydra.runtime.output_dir}/${hydra.job.name}.log
+    root:
+      level: INFO
+      handlers:
+      - console
+      - file
+    disable_existing_loggers: false
+  env: {}
+  mode: RUN
+  searchpath: []
+  callbacks: {}
+  output_subdir: .hydra
+  overrides:
+    hydra:
+    - hydra.mode=RUN
+    task:
+    - device=auto
+    - num_gpus=1
+    - tester=singer_evaluator_BABE2
+    - tester.checkpoint=/media/kisna/dataset/Project_Bollywood/audio_restore/pretrained_models/singing_voice_pretrain_44kHz_6s-325kits.pt
+    - id=BABE2_restored
+    - tester.evaluation.single_recording=/media/kisna/bkp_data/DeOldify/video_data/proPainterVidOut/HumToMohabbatKarega_DilliKaThug_0/HumToMohabbatKarega_DilliKaThug.wav
+  job:
+    name: test
+    chdir: null
+    override_dirname: device=auto,id=BABE2_restored,num_gpus=1,tester.checkpoint=/media/kisna/dataset/Project_Bollywood/audio_restore/pretrained_models/singing_voice_pretrain_44kHz_6s-325kits.pt,tester.evaluation.single_recording=/media/kisna/bkp_data/DeOldify/video_data/proPainterVidOut/HumToMohabbatKarega_DilliKaThug_0/HumToMohabbatKarega_DilliKaThug.wav,tester=singer_evaluator_BABE2
+    id: ???
+    num: ???
+    config_name: conf_singing_voice.yaml
+    env_set: {}
+    env_copy: []
+    config:
+      override_dirname:
+        kv_sep: '='
+        item_sep: ','
+        exclude_keys:
+        - path_experiment
+        - hydra.job_logging.handles.file.filename
+  runtime:
+    version: 1.3.1
+    version_base: '1.1'
+    cwd: /media/kisna/dataset/Project_Bollywood/audio_restore/BABE2-music-restoration
+    config_sources:
+    - path: hydra.conf
+      schema: pkg
+      provider: hydra
+    - path: /media/kisna/dataset/Project_Bollywood/audio_restore/BABE2-music-restoration/conf
+      schema: file
+      provider: main
+    - path: ''
+      schema: structured
+      provider: schema
+    output_dir: /media/kisna/dataset/Project_Bollywood/audio_restore/BABE2-music-restoration/outputs/2025-10-04/13-56-31
+    choices:
+      logging: base_logging
+      exp: singing_voice_44k_6s
+      tester: singer_evaluator_BABE2
+      diff_params: edm_HQ_datasets
+      network: cqtdiff+_44k
+      dset: HQ_datasets
+      hydra/env: default
+      hydra/callbacks: null
+      hydra/job_logging: default
+      hydra/hydra_logging: default
+      hydra/hydra_help: default
+      hydra/help: default
+      hydra/sweeper: basic
+      hydra/launcher: basic
+      hydra/output: default
+  verbose: false
