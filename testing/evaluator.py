@@ -39,7 +39,7 @@ class Evaluator():
 
     def load_checkpoint(self, path):
 
-        state_dict = torch.load(path, map_location=self.device)
+        state_dict = torch.load(path, map_location=self.device, weights_only=False)
         self.network.load_state_dict(state_dict['ema'])
         self.it=state_dict['it']
         self.LTAS_ref=state_dict['LTAS'].to(self.device)
