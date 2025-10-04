@@ -140,8 +140,10 @@ class Evaluator():
         if self.args.tester.evaluation.LTAS_init:
             x_init=self.apply_LTAS_init(recording)
 
-            path, basename=os.path.split(recording_path)
-            sf.write(os.path.join(path, basename+"LTAS.wav"), x_init, self.args.exp.sample_rate)
+            # Use output directory for LTAS file instead of input directory
+            output_path = self.args.model_dir
+            _, basename = os.path.split(recording_path)
+            sf.write(os.path.join(output_path, basename.replace('.wav', '_LTAS.wav')), x_init, self.args.exp.sample_rate)
 
             if self.args.tester.evaluation.LTAS_as_y:
                 recording=x_init
@@ -235,7 +237,7 @@ class Evaluator():
                     result_mask[ix_start[0]:ix_end[0]]=1
 
                 #save result    
-                sf.write(os.path.join(path, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
+                sf.write(os.path.join(self.args.model_dir, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
 
                 for i in range(1, len(segs)):
                     #process segs one by one
@@ -277,28 +279,28 @@ class Evaluator():
                         result_mask[ix_start[i]:ix_end[i]]=1
                         result[ix_start[i]:ix_end[i]]=pred[0].cpu()
                         #save result
-                        sf.write(os.path.join(path, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
+                        sf.write(os.path.join(self.args.model_dir, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
 
                 result=result[0:recording.shape[-1]]
-                sf.write(os.path.join(path, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
+                sf.write(os.path.join(self.args.model_dir, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
 
                 #save list of estimated_filters as a pkl file, as this will be used for the whole recording
                 path, basename=os.path.split(recording_path)
-                with open(os.path.join(path, basename+".filter_"+str(self.args.id)+".pkl"), "wb") as f:
+                with open(os.path.join(self.args.model_dir, basename+".filter_"+str(self.args.id)+".pkl"), "wb") as f:
                     pickle.dump(estimated_filters, f)
 
         elif self.args.tester.evaluation.process_complete_mode=="Time-Invariant":
 
                 #save estimated_filter as a pkl file, as this will be used for the whole recording
                 path, basename=os.path.split(recording_path)
-                with open(os.path.join(path, basename+".filter_"+str(self.args.id)+".pkl"), "wb") as f:
+                with open(os.path.join(self.args.model_dir, basename+".filter_"+str(self.args.id)+".pkl"), "wb") as f:
                     pickle.dump(estimated_filter, f)
 
                 for i in range(0, pred.shape[0]):
                     result[ix_start_blind[i]:ix_end_blind[i]]=pred[i].cpu()
                     result_mask[ix_start_blind[i]:ix_end_blind[i]]=1
                 #save result    
-                sf.write(os.path.join(path, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
+                sf.write(os.path.join(self.args.model_dir, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
 
                 for i in range(0, len(segs)):
                     #process segs one by one
@@ -336,10 +338,10 @@ class Evaluator():
                         result_mask[ix_start[i]:ix_end[i]]=1
                         result[ix_start[i]:ix_end[i]]=pred[0].cpu()
                         #save result
-                        sf.write(os.path.join(path, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
+                        sf.write(os.path.join(self.args.model_dir, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
 
                 result=result[0:recording.shape[-1]]
-                sf.write(os.path.join(path, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
+                sf.write(os.path.join(self.args.model_dir, basename+".reconstructed_"+str(self.args.id)+".wav"), std_orig*result.cpu().numpy()/self.args.tester.blind_bwe.sigma_norm, self.args.exp.sample_rate)
 
         else:
                 raise NotImplementedError
