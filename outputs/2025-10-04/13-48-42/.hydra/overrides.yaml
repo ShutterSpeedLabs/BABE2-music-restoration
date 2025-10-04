@@ -1,0 +1,6 @@
+- device=auto
+- num_gpus=2
+- tester=singer_evaluator_BABE2
+- tester.checkpoint=/media/kisna/dataset/Project_Bollywood/audio_restore/pretrained_models/singing_voice_pretrain_44kHz_6s-325kits.pt
+- id=BABE2_restored
+- tester.evaluation.single_recording=/media/kisna/bkp_data/DeOldify/video_data/proPainterVidOut/HumToMohabbatKarega_DilliKaThug_0/HumToMohabbatKarega_DilliKaThug.wav

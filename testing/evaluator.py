@@ -40,7 +40,21 @@ class Evaluator():
     def load_checkpoint(self, path):
 
         state_dict = torch.load(path, map_location=self.device, weights_only=False)
-        self.network.load_state_dict(state_dict['ema'])
+
+        # Handle DataParallel checkpoint loading
+        if isinstance(self.network, torch.nn.DataParallel):
+            # If the checkpoint was saved from a regular model but we're loading into DataParallel
+            new_state_dict = {}
+            for k, v in state_dict['ema'].items():
+                if k.startswith('module.'):
+                    new_state_dict[k] = v
+                else:
+                    new_state_dict['module.' + k] = v
+            self.network.load_state_dict(new_state_dict)
+        else:
+            # Regular model loading
+            self.network.load_state_dict(state_dict['ema'])
+
         self.it=state_dict['it']
         self.LTAS_ref=state_dict['LTAS'].to(self.device)
 
